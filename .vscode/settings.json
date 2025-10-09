@@ -1,0 +1,4 @@
+{
+    "ollama-autocoder.endpoint": "http://10.35.35.8:11434/api/generate",
+    "ollama-autocoder.model": "codellama:latest"
+}
