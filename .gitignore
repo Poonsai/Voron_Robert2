@@ -1,3 +1,26 @@
 saved_variables.cfg
 adxl_results/belts/*.csv
 adxl_results/vibrations/*.tar.gz
+
+# Klipper generated
+*.cfg.bkp
+moonraker-sql.db
+
+# Backups
+Backups/
+old_configs/
+config-*.zip
+
+# Logs and cache
+*.log
+.logs/
+.vscode/
+.opencode/
+
+# Shaper results
+shaper/*.png
+ShakeTune_results/
+
+# OS
+.DS_Store
+Thumbs.db
