@@ -31,6 +31,15 @@ Documentation for all scripts and macros in this project.
 | [nozzle_scrub.md](nozzle_scrub.md) | Nozzle cleaning macro |
 | [homing.md](homing.md) | Custom homing with higher current |
 | [test_speed.md](test_speed.md) | Speed/accel testing |
+| [pid_tune.md](pid_tune.md) | PID tuning for heaters |
+| [pause_print_stats.md](pause_print_stats.md) | Advanced pause & print stats |
+
+## Configuration (configs/)
+
+| File | Description |
+|------|-------------|
+| [filament_runout.md](filament_runout.md) | Filament runout sensor |
+| [powerloss.md](powerloss.md) | Power loss recovery |
 
 ## Configuration Reference
 
@@ -80,6 +89,26 @@ PRINT_Temps
 ### Test speed:
 ```
 TEST_SPEED
+```
+
+### PID tuning:
+```
+PID_TUNE_BED
+PID_TUNE_EXTRUDER
+PID_TUNE_ALL
+```
+
+### Pause/Resume:
+```
+PAUSE
+RESUME
+PRINT_STATUS
+```
+
+### Print stats:
+```
+PRINT_STATS
+JOB_STATUS
 ```
 
 ### Home:
