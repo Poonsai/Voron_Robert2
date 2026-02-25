@@ -22,9 +22,21 @@ Documentation for all scripts and macros in this project.
 
 | File | Description |
 |------|-------------|
+| [print_start.md](print_start.md) | Print start sequence |
 | [end_print.md](end_print.md) | End print with auto cleanup |
+| [cancel_print.md](cancel_print.md) | Cancel print with cleanup |
 | [material_presets.md](material_presets.md) | PLA/PETG/ABS/TPU presets |
 | [filament_change.md](filament_change.md) | Mid-print filament change |
+| [load_unload_filament.md](load_unload_filament.md) | Basic load/unload filament |
+| [nozzle_scrub.md](nozzle_scrub.md) | Nozzle cleaning macro |
+| [homing.md](homing.md) | Custom homing with higher current |
+| [test_speed.md](test_speed.md) | Speed/accel testing |
+
+## Configuration Reference
+
+| File | Description |
+|------|-------------|
+| [config_reference.md](config_reference.md) | Core config files overview |
 
 ## Project Info
 
@@ -38,6 +50,13 @@ Documentation for all scripts and macros in this project.
 ### Run backup:
 ```
 BACKUP_CFG
+```
+
+### Print start/end:
+```
+PRINT_START BED=60 EXTRUDER=210
+END_PRINT
+CANCEL_PRINT
 ```
 
 ### Material presets:
@@ -56,4 +75,14 @@ CHANGE_FILAMENT TEMP=240
 ### Check temps:
 ```
 PRINT_Temps
+```
+
+### Test speed:
+```
+TEST_SPEED
+```
+
+### Home:
+```
+G28
 ```
