@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 #######################################################################
 ## NOTE: This script originates from here but I tweaked the pull     ##
@@ -36,6 +37,9 @@ branch=main
 
 db_file=~/printer_data/database/moonraker-sql.db
 
+# Set to true to see what would be committed without pushing
+DRY_RUN=false
+
 #####################################################################
 #####################################################################
 
@@ -44,52 +48,81 @@ db_file=~/printer_data/database/moonraker-sql.db
 #####################################################################
 ################ !!! DO NOT EDIT BELOW THIS LINE !!! ################
 #####################################################################
-grab_version(){
-  if [ ! -z "$klipper_folder" ]; then
-    klipper_commit=$(git -C $klipper_folder describe --always --tags --long | awk '{gsub(/^ +| +$/,"")} {print $0}')
-    m1="Klipper version: $klipper_commit"
-  fi
-  if [ ! -z "$moonraker_folder" ]; then
-    moonraker_commit=$(git -C $moonraker_folder describe --always --tags --long | awk '{gsub(/^ +| +$/,"")} {print $0}')
-    m2="Moonraker version: $moonraker_commit"
-  fi
-  if [ ! -z "$mainsail_folder" ]; then
-    mainsail_ver=$(head -n 1 $mainsail_folder/.version)
-    m3="Mainsail version: $mainsail_ver"
-  fi
-  if [ ! -z "$fluidd_folder" ]; then
-    fluidd_ver=$(head -n 1 $fluidd_folder/.version)
-    m4="Fluidd version: $fluidd_ver"
-  fi
+log(){
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] $1"
 }
 
-# Here we copy the sqlite database for backup
-# To RESTORE the database, stop moonraker, then use the following command:
-# cp ~/printer_data/config/moonraker-sql.db ~/printer_data/database/
-# Finally, restart moonraker
+grab_version(){
+    m1=""
+    m2=""
+    m3=""
+    m4=""
+    
+    if [ -n "$klipper_folder" ] && [ -d "$klipper_folder/.git" ]; then
+        klipper_commit=$(git -C "$klipper_folder" describe --always --tags --long 2>/dev/null | awk '{gsub(/^ +| +$/,"")} {print $1}')
+        m1="Klipper version: $klipper_commit"
+        log "Found Klipper: $klipper_commit"
+    fi
+    if [ -n "$moonraker_folder" ] && [ -d "$moonraker_folder/.git" ]; then
+        moonraker_commit=$(git -C "$moonraker_folder" describe --always --tags --long 2>/dev/null | awk '{gsub(/^ +| +$/,"")} {print $1}')
+        m2="Moonraker version: $moonraker_commit"
+        log "Found Moonraker: $moonraker_commit"
+    fi
+    if [ -n "$mainsail_folder" ] && [ -f "$mainsail_folder/.version" ]; then
+        mainsail_ver=$(head -n 1 "$mainsail_folder/.version" 2>/dev/null)
+        m3="Mainsail version: $mainsail_ver"
+        log "Found Mainsail: $mainsail_ver"
+    fi
+    if [ -n "$fluidd_folder" ] && [ -f "$fluidd_folder/.version" ]; then
+        fluidd_ver=$(head -n 1 "$fluidd_folder/.version" 2>/dev/null)
+        m4="Fluidd version: $fluidd_ver"
+        log "Found Fluidd: $fluidd_ver"
+    fi
+}
 
-if [ -f $db_file ]; then
-   echo "sqlite based history database found! Copying..."
-   cp ~/printer_data/database/moonraker-sql.db ~/printer_data/config/
-else
-   echo "sqlite based history database not found"
-fi
-
-# To fully automate this and not have to deal with auth issues, generate a legacy token on Github
-# then update the command below to use the token. Run the command in your base directory and it will
-# handle auth. This should just be executed in your shell and not committed to any files or
-# Github will revoke the token. =)
-# git remote set-url origin https://XXXXXXXXXXX@github.com/EricZimmerman/Voron24Configs.git/
-# Note that that format is for changing things after the repository is in use, vs initially
+backup_db(){
+    if [ -f "$db_file" ]; then
+        if [ -f "$config_folder/.gitignore" ] && grep -q "moonraker-sql.db" "$config_folder/.gitignore" 2>/dev/null; then
+            log "Database ignored in .gitignore, skipping backup"
+        else
+            log "SQLite database found. Copying..."
+            cp "$db_file" "$config_folder/"
+        fi
+    else
+        log "SQLite database not found at $db_file"
+    fi
+}
 
 push_config(){
-  cd $config_folder
-  git pull origin $branch --no-rebase
-  git add .
-  current_date=$(date +"%Y-%m-%d %T")
-  git commit -m "Autocommit from $current_date" -m "$m1" -m "$m2" -m "$m3" -m "$m4"
-  git push origin $branch
+    cd "$config_folder"
+    
+    # Check for changes
+    if [ -z "$(git status --porcelain)" ]; then
+        log "No changes to commit"
+        return 0
+    fi
+    
+    log "Changes detected, proceeding with commit..."
+    
+    git pull origin "$branch" --no-rebase
+    
+    git add .
+    current_date=$(date +"%Y-%m-%d %H:%M:%S")
+    
+    if [ "$DRY_RUN" = true ]; then
+        log "DRY RUN: Would commit with message: Autocommit from $current_date"
+        log "Would include: $m1 | $m2 | $m3 | $m4"
+        return 0
+    fi
+    
+    git commit -m "Autocommit from $current_date" -m "$m1" -m "$m2" -m "$m3" -m "$m4"
+    log "Commit created, pushing..."
+    git push origin "$branch"
+    log "Push complete"
 }
 
+log "Starting autocommit script..."
 grab_version
+backup_db
 push_config
+log "Done!"
