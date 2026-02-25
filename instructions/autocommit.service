@@ -1,0 +1,14 @@
+[Unit]
+Description=Auto backup Klipper config to GitHub
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=pi
+WorkingDirectory=/home/pi/printer_data/config
+ExecStart=/bin/bash -c '~/printer_data/config/autocommit.sh'
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

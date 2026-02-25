@@ -53,3 +53,48 @@ DRY_RUN=true sh ~/printer_data/config/autocommit.sh
 - The script checks if `moonraker-sql.db` is in `.gitignore` before backing it up
 - If no changes are detected, the script exits gracefully without creating a commit
 - Version info is captured from Git describe tags and .version files
+
+## Automated Backup (Systemd Timer)
+
+The backup can run automatically every 6 hours using systemd.
+
+### Setup
+
+Copy the service and timer files to systemd directory:
+
+```bash
+# Copy files
+sudo cp ~/printer_data/config/instructions/autocommit.service /etc/systemd/system/
+sudo cp ~/printer_data/config/instructions/autocommit.timer /etc/systemd/system/
+
+# Reload systemd
+sudo systemctl daemon-reload
+
+# Enable and start the timer
+sudo systemctl enable autocommit.timer
+sudo systemctl start autocommit.timer
+
+# Check status
+sudo systemctl status autocommit.timer
+```
+
+### Timer Status
+
+View next run time:
+```bash
+systemctl list-timers --all | grep autocommit
+```
+
+### Manual Trigger
+
+Run backup immediately:
+```bash
+sudo systemctl start autocommit.service
+```
+
+### Logs
+
+View backup logs:
+```bash
+journalctl -u autocommit.service -f
+```

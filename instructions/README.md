@@ -1,6 +1,15 @@
-# Instructions Index
+# How-To Instructions
 
 Documentation for all scripts and macros in this project.
+
+## Automated Backups
+
+| File | Description |
+|------|-------------|
+| [autocommit.sh](autocommit.md) | Manual backup script |
+| [autocommit.service](autocommit.service) | Systemd service |
+| [autocommit.timer](autocommit.timer) | Systemd timer (runs every 6h) |
+| [restore.sh](restore.sh) | Restore from GitHub backup |
 
 ## Scripts (Root)
 
@@ -13,9 +22,9 @@ Documentation for all scripts and macros in this project.
 
 | File | Description |
 |------|-------------|
-| [end_print.cfg](end_print.cfg) | End print with auto cleanup |
-| [material_presets.cfg](material_presets.md) | PLA/PETG/ABS/TPU presets |
-| [filament_change.cfg](filament_change.md) | Mid-print filament change |
+| [end_print.md](end_print.md) | End print with auto cleanup |
+| [material_presets.md](material_presets.md) | PLA/PETG/ABS/TPU presets |
+| [filament_change.md](filament_change.md) | Mid-print filament change |
 
 ## Project Info
 
