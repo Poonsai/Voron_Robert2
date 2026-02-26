@@ -33,6 +33,12 @@ Documentation for all scripts and macros in this project.
 | [test_speed.md](test_speed.md) | Speed/accel testing |
 | [pid_tune.md](pid_tune.md) | PID tuning for heaters |
 | [pause_print_stats.md](pause_print_stats.md) | Advanced pause & print stats |
+| [bed_mesh_profiles.md](bed_mesh_profiles.md) | Save/load mesh profiles |
+| [temp_wait.md](temp_wait.md) | Preheat and temp macros |
+| [slicer.md](slicer.md) | Pre-print validation |
+| [led_notifications.md](led_notifications.md) | LED status patterns |
+| [z_offset.md](z_offset.md) | Per-filament z-offset memory |
+| [utilities.md](utilities.md) | WiFi, power, emergency stop |
 
 ## Configuration (configs/)
 
@@ -40,12 +46,7 @@ Documentation for all scripts and macros in this project.
 |------|-------------|
 | [filament_runout.md](filament_runout.md) | Filament runout sensor |
 | [powerloss.md](powerloss.md) | Power loss recovery |
-
-## Configuration Reference
-
-| File | Description |
-|------|-------------|
-| [config_reference.md](config_reference.md) | Core config files overview |
+| [notifications.md](notifications.md) | Telegram/Discord alerts |
 
 ## Project Info
 
@@ -81,14 +82,18 @@ SET_TPU
 CHANGE_FILAMENT TEMP=240
 ```
 
-### Check temps:
+### Temperature:
 ```
-PRINT_Temps
+PREHEAT BED=60 HOTEND=210
+TEMP_STATUS
+COOLDOWN
 ```
 
-### Test speed:
+### Bed mesh:
 ```
-TEST_SPEED
+SAVE_MESH NAME=pla
+LOAD_MESH NAME=pla
+CALIBRATE_MESH RUNS=2
 ```
 
 ### PID tuning:
@@ -111,7 +116,19 @@ PRINT_STATS
 JOB_STATUS
 ```
 
-### Home:
+### Homing & Calibration:
 ```
 G28
+CALIBRATE_Z_OFFSET
+QUAD_GANTRY_LEVEL
+TEST_SPEED
+```
+
+### Utilities:
+```
+CHECK_SETUP
+VALIDATE_PRINT
+QUICK_START
+LED_CUSTOM R=255 G=0 B=0
+LAYER CURRENT_LAYER=50 TOTAL_LAYERS=100
 ```
